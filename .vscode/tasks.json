@@ -1,0 +1,27 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build debug",
+      "type": "shell",
+      "osx": {
+        "options": {
+          "cwd": "${workspaceFolder}",
+          "env": {
+            "CGO_LDFLAGS": "-framework UniformTypeIdentifiers"
+          }
+        },
+        "command": "go",
+        "args": [
+          "build",
+          "-gcflags",
+          "all=-N -l",
+          "-tags",
+          "dev",
+          "-o",
+          "build/bin/pocket-gpt"
+        ]
+      }
+    }
+  ]
+}
