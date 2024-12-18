@@ -2,14 +2,16 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "wails-build-debug",
+      "label": "wait-for-backend",
       "type": "shell",
-      "command": "wails build -tags debug -race -gcflags='all=-N -l'",
-      "group": {
-        "kind": "build",
-        "isDefault": true
+      "command": "sleep 2",
+      "windows": {
+        "command": "timeout 2"
       },
-      "problemMatcher": ["$go"]
+      "presentation": {
+        "reveal": "never",
+        "panel": "shared"
+      }
     }
   ]
 } 
