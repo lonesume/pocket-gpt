@@ -1,12 +1,14 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import "./App.css";
 import { GetGPTResponse, GetUserName } from "../wailsjs/go/main/App";
 function App() {
   const [resultText, setResultText] = useState("");
-  const [query, setQuery] = useState("Brian");
+  const [query, setQuery] = useState("");
   const [userName, setUserName] = useState("dear");
+
   const updateQuery = (e: any) => setQuery(e.target.value);
 
+  // Fetch username on component mount
   useEffect(() => {
     async function fetchUserName() {
       const name = await GetUserName();
@@ -20,9 +22,38 @@ function App() {
     fetchUserName();
   }, []);
 
-  function getGPTResponse() {
+  // Handle keyboard events
+  const handleInputEvent = useCallback(
+    (event: KeyboardEvent) => {
+      const key = event.key;
+      console.log(event);
+
+      switch (key) {
+        case "Enter":
+          getGPTResponse();
+          return;
+        case "Escape":
+          console.log("closing");
+          return;
+      }
+    },
+    [query]
+  );
+
+  useEffect(() => {
+    document.addEventListener("keypress", handleInputEvent);
+    return () => {
+      document.removeEventListener("keypress", handleInputEvent);
+    };
+  }, [handleInputEvent]);
+
+  const getGPTResponse = useCallback(() => {
+    if (!query) {
+      alert("Query cannot be empty");
+      return;
+    }
     GetGPTResponse(query).then(typeResponseGradually);
-  }
+  }, [query]);
 
   function typeResponseGradually(message: string) {
     setResultText(""); // Clear any previous text

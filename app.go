@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"os/user"
+	"strings"
 
 	"github.com/joho/godotenv"
 	"github.com/openai/openai-go"
@@ -46,10 +47,11 @@ func (a *App) GetUserName() string {
 
 	var name string
 
-	if curUser.Name == "" {
-		name = curUser.Username
+	if curUser.Name != "" {
+		name = curUser.Name
 	} else {
-		name = curUser.Username
+		split := strings.Split(curUser.Username, "/")
+		name = split[len(split) - 1]
 	}
 
 	return name
