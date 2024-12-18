@@ -7,10 +7,12 @@
       "request": "launch",
       "url": "http://localhost:34115",
       "webRoot": "${workspaceFolder}/frontend",
-      "runtimeExecutable": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+      "runtimeExecutable": "stable",
       "runtimeArgs": [
         "--remote-debugging-port=9222",
-        "--user-data-dir=${workspaceFolder}/.chrome-debug-profile"
+        "--user-data-dir=${workspaceFolder}/.chrome-debug-profile",
+        "--window-size=1,1",
+        "--window-position=0,0"
       ],
       "sourceMapPathOverrides": {
         "webpack:///./~/*": "${workspaceFolder}/frontend/node_modules/*",
