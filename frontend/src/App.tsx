@@ -1,23 +1,27 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import "./App.css";
 import { GetGPTResponse, GetUserName } from "../wailsjs/go/main/App";
 function App() {
   const [resultText, setResultText] = useState("");
-  const [name, setName] = useState("Brian");
-  const updateName = (e: any) => setName(e.target.value);
+  const [query, setQuery] = useState("Brian");
+  const [userName, setUserName] = useState("dear");
+  const updateQuery = (e: any) => setQuery(e.target.value);
 
-  const nameOfUser = useMemo(async () => {
-    const [userName, error] = await GetUserName();
-
-    if (error) {
-      throw new Error("Error fetching user name");
+  useEffect(() => {
+    async function fetchUserName() {
+      const name = await GetUserName();
+      if (!name) {
+        console.error("User name not found");
+        setUserName("dear");
+      } else {
+        setUserName(name);
+      }
     }
-
-    return userName;
+    fetchUserName();
   }, []);
 
   function getGPTResponse() {
-    GetGPTResponse(name).then(typeResponseGradually);
+    GetGPTResponse(query).then(typeResponseGradually);
   }
 
   function typeResponseGradually(message: string) {
@@ -38,21 +42,17 @@ function App() {
     typeChar(); // Start the typing effect
   }
 
-  useEffect(() => {
-    console.log("Frontend debugging is working!");
-  }, []);
-
   return (
     <div id="App">
       <div id="input" className="input-box">
         <input
           id="name"
           className="w-10/12 text-black"
-          onChange={updateName}
+          onChange={updateQuery}
           autoComplete="off"
           name="input"
           type="text"
-          placeholder={`How can I help today, ${name}?`}
+          placeholder={`How can I help today, ${userName}?`}
         />
         <button className="btn" onClick={getGPTResponse}>
           Search

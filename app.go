@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/user"
 
 	"github.com/joho/godotenv"
 	"github.com/openai/openai-go"
@@ -36,15 +37,26 @@ func (a *App) startup(ctx context.Context) {
 	}
 }
 
-func (a *App) GetUserName() (string, error) {
-	fmt.Println(os.UserHomeDir())
-	return os.UserHomeDir()
+func (a *App) GetUserName() string {
+	curUser, err := user.Current()
+
+	if err != nil {
+		return ""
+	}
+
+	var name string
+
+	if curUser.Name == "" {
+		name = curUser.Username
+	} else {
+		name = curUser.Username
+	}
+
+	return name
 }
 
 // GetGPTResponse returns a response from GPT
 func (a *App) GetGPTResponse(userMessage string) string {
-	fmt.Println("Debug test")
-	
 	// Validate that the key has been replaced during build
 	if POCKET_GPT_KEY == "replace_with_actual_key" {
 		log.Fatal("API key was not properly injected during build")
