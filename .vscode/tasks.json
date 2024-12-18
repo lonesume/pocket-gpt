@@ -2,9 +2,9 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "build debug",
+      "label": "wails-build-debug",
       "type": "shell",
-      "command": "wails build -debug",
+      "command": "wails build -tags debug -race -gcflags='all=-N -l'",
       "group": {
         "kind": "build",
         "isDefault": true
@@ -12,4 +12,4 @@
       "problemMatcher": ["$go"]
     }
   ]
-}
+} 

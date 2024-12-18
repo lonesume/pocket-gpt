@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 
@@ -27,6 +28,7 @@ func NewApp() *App {
 // so we can call the runtime methods
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
+	fmt.Println("Backend debugging is working!")
 
 	godotenv.Load(".env")
 	if envKey := os.Getenv("POCKET_GPT_KEY"); envKey != "" {
@@ -34,8 +36,15 @@ func (a *App) startup(ctx context.Context) {
 	}
 }
 
+func (a *App) GetUserName() (string, error) {
+	fmt.Println(os.UserHomeDir())
+	return os.UserHomeDir()
+}
+
 // GetGPTResponse returns a response from GPT
 func (a *App) GetGPTResponse(userMessage string) string {
+	fmt.Println("Debug test")
+	
 	// Validate that the key has been replaced during build
 	if POCKET_GPT_KEY == "replace_with_actual_key" {
 		log.Fatal("API key was not properly injected during build")

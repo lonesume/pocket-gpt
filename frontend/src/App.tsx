@@ -1,10 +1,20 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import "./App.css";
-import { GetGPTResponse } from "../wailsjs/go/main/App";
+import { GetGPTResponse, GetUserName } from "../wailsjs/go/main/App";
 function App() {
   const [resultText, setResultText] = useState("");
   const [name, setName] = useState("Brian");
   const updateName = (e: any) => setName(e.target.value);
+
+  const nameOfUser = useMemo(async () => {
+    const [userName, error] = await GetUserName();
+
+    if (error) {
+      throw new Error("Error fetching user name");
+    }
+
+    return userName;
+  }, []);
 
   function getGPTResponse() {
     GetGPTResponse(name).then(typeResponseGradually);
@@ -27,6 +37,10 @@ function App() {
 
     typeChar(); // Start the typing effect
   }
+
+  useEffect(() => {
+    console.log("Frontend debugging is working!");
+  }, []);
 
   return (
     <div id="App">
