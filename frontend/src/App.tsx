@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
-import "./App.css";
 import { GetGPTResponse, GetUserName } from "../wailsjs/go/main/App";
+import Markdown from "react-markdown";
+
 function App() {
   const [resultText, setResultText] = useState("");
   const [query, setQuery] = useState("");
@@ -88,8 +89,8 @@ function App() {
         <button className="btn" onClick={getGPTResponse}>
           Search
         </button>
-        <div id="result" className="result">
-          {resultText}
+        <div id="result" className="text-left">
+          <Markdown>{resultText}</Markdown>
         </div>
       </div>
     </div>

@@ -6,6 +6,9 @@ export default defineConfig({
   plugins: [react()],
   build: {
     sourcemap: true,
+    rollupOptions: {
+      external: ["#minpath", "#minproc", "#minurl"],
+    },
   },
   server: {
     watch: {
