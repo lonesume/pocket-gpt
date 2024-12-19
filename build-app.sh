@@ -19,4 +19,4 @@ wails build -platform darwin -ldflags "-X main.POCKET_GPT_KEY=$POCKET_GPT_KEY"
 # Sign the app if necessary
 codesign --sign "Developer ID Application: lonesume" --deep --force build/bin/pocket-gpt.app
 
-cp build/bin/pocket-gpt.app ~/Applications
+cp -R build/bin/pocket-gpt.app ~/Applications
