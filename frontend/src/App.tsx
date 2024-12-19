@@ -1,14 +1,59 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import "./App.css";
-import { GetGPTResponse } from "../wailsjs/go/main/App";
+import { GetGPTResponse, GetUserName } from "../wailsjs/go/main/App";
 function App() {
   const [resultText, setResultText] = useState("");
-  const [name, setName] = useState("Brian");
-  const updateName = (e: any) => setName(e.target.value);
+  const [query, setQuery] = useState("");
+  const [userName, setUserName] = useState("dear");
 
-  function getGPTResponse() {
-    GetGPTResponse(name).then(typeResponseGradually);
-  }
+  const updateQuery = (e: any) => setQuery(e.target.value);
+
+  // Fetch username on component mount
+  useEffect(() => {
+    async function fetchUserName() {
+      const name = await GetUserName();
+      if (!name) {
+        console.error("User name not found");
+        setUserName("dear");
+      } else {
+        setUserName(name);
+      }
+    }
+    fetchUserName();
+  }, []);
+
+  // Handle keyboard events
+  const handleInputEvent = useCallback(
+    (event: KeyboardEvent) => {
+      const key = event.key;
+      console.log(event);
+
+      switch (key) {
+        case "Enter":
+          getGPTResponse();
+          return;
+        case "Escape":
+          console.log("closing");
+          return;
+      }
+    },
+    [query]
+  );
+
+  useEffect(() => {
+    document.addEventListener("keypress", handleInputEvent);
+    return () => {
+      document.removeEventListener("keypress", handleInputEvent);
+    };
+  }, [handleInputEvent]);
+
+  const getGPTResponse = useCallback(() => {
+    if (!query) {
+      alert("Query cannot be empty");
+      return;
+    }
+    GetGPTResponse(query).then(typeResponseGradually);
+  }, [query]);
 
   function typeResponseGradually(message: string) {
     setResultText(""); // Clear any previous text
@@ -34,11 +79,11 @@ function App() {
         <input
           id="name"
           className="w-10/12 text-black"
-          onChange={updateName}
+          onChange={updateQuery}
           autoComplete="off"
           name="input"
           type="text"
-          placeholder={`How can I help today, ${name}?`}
+          placeholder={`How can I help today, ${userName}?`}
         />
         <button className="btn" onClick={getGPTResponse}>
           Search

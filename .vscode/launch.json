@@ -1,0 +1,38 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Attach to Frontend",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:34115",
+      "webRoot": "${workspaceFolder}/frontend",
+      "runtimeExecutable": "stable",
+      "runtimeArgs": [
+        "--remote-debugging-port=9222",
+        "--user-data-dir=${workspaceFolder}/.chrome-debug-profile",
+        "--window-size=1,1",
+        "--window-position=0,0"
+      ],
+      "sourceMapPathOverrides": {
+        "webpack:///./~/*": "${workspaceFolder}/frontend/node_modules/*",
+        "webpack:///./*": "${workspaceFolder}/frontend/*",
+        "webpack:///*": "*"
+      }
+    },
+    {
+      "name": "Debug Backend",
+      "type": "go",
+      "request": "attach",
+      "mode": "local",
+      "processId": "${command:pickGoProcess}",
+      "showLog": true
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Debug Full Stack",
+      "configurations": ["Debug Backend", "Attach to Frontend"]
+    }
+  ]
+} 

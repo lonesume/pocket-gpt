@@ -5,3 +5,7 @@
 export function GetGPTResponse(arg1) {
   return window['go']['main']['App']['GetGPTResponse'](arg1);
 }
+
+export function GetUserName() {
+  return window['go']['main']['App']['GetUserName']();
+}

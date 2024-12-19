@@ -1,0 +1,1 @@
+@Codebase This codebase is a wails app (reference @https://wails.io/ ) I want to be able to debug both the react code and the go code at once and have hot reolading on both

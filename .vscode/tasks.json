@@ -1,0 +1,17 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "wait-for-backend",
+      "type": "shell",
+      "command": "sleep 2",
+      "windows": {
+        "command": "timeout 2"
+      },
+      "presentation": {
+        "reveal": "never",
+        "panel": "shared"
+      }
+    }
+  ]
+} 

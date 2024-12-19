@@ -2,8 +2,11 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
+	"os/user"
+	"strings"
 
 	"github.com/joho/godotenv"
 	"github.com/openai/openai-go"
@@ -27,11 +30,31 @@ func NewApp() *App {
 // so we can call the runtime methods
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
+	fmt.Println("Backend debugging is working!")
 
 	godotenv.Load(".env")
 	if envKey := os.Getenv("POCKET_GPT_KEY"); envKey != "" {
 		POCKET_GPT_KEY = envKey
 	}
+}
+
+func (a *App) GetUserName() string {
+	curUser, err := user.Current()
+
+	if err != nil {
+		return ""
+	}
+
+	var name string
+
+	if curUser.Name != "" {
+		name = curUser.Name
+	} else {
+		split := strings.Split(curUser.Username, "/")
+		name = split[len(split) - 1]
+	}
+
+	return name
 }
 
 // GetGPTResponse returns a response from GPT
