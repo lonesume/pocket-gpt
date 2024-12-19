@@ -30,3 +30,4 @@ frontend/dist
 
 .vscode/settings.json
 .chrome-debug-profile
+frontend/package.json.md5
