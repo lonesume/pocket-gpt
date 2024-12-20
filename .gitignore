@@ -32,3 +32,6 @@ frontend/dist
 .chrome-debug-profile
 frontend/package.json.md5
 .DS_Store
+
+# Build file may be large and bloaty on deployed env
+build
