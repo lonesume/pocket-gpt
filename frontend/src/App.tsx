@@ -1,32 +1,107 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import "./App.css";
-import { GetGPTResponse } from "../wailsjs/go/main/App";
+import { GetGPTResponse, GetUserName } from "../wailsjs/go/main/App";
 function App() {
   const [resultText, setResultText] = useState("");
-  const [name, setName] = useState("Brian");
-  const updateName = (e: any) => setName(e.target.value);
+  const [query, setQuery] = useState("");
+  const [userName, setUserName] = useState("dear");
+  const [isGptResponseLoading, setIsGptResponseLoading] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
 
-  function getGPTResponse() {
-    GetGPTResponse(name).then(typeResponseGradually);
-  }
+  const updateQuery = (e: any) => setQuery(e.target.value);
 
-  function typeResponseGradually(message: string) {
-    setResultText(""); // Clear any previous text
-    let index = -1;
-    const speed = 50; // Speed of typing effect in milliseconds
-
-    function typeChar() {
-      if (index < message.length) {
-        setResultText((prev) => {
-          return prev + message.charAt(index);
-        });
-        index++;
-        setTimeout(typeChar, speed); // Recursively call to add the next character
-      }
+  const getGPTResponse = useCallback(async () => {
+    if (!query) {
+      setResultText(
+        "Query cannot be empty, please enter something in the search bar"
+      );
+      return;
     }
 
-    typeChar(); // Start the typing effect
-  }
+    if (isGptResponseLoading || isTyping) {
+      return;
+    }
+
+    try {
+      setIsGptResponseLoading(true);
+      const gptResponse = await GetGPTResponse(query);
+      setIsGptResponseLoading(false);
+
+      typeResponseGradually(gptResponse);
+    } catch (e) {
+      setResultText(`Error getting GPT response: ${e}`);
+    }
+  }, [query, isTyping, isGptResponseLoading]);
+
+  const typeResponseGradually = (message: string) => {
+    setResultText(""); // Clear any previous text
+    setIsTyping(true);
+    let index = 0;
+    const speed = 50;
+
+    const typeChar = () => {
+      if (index < message.length) {
+        setResultText((prev) => prev + message.charAt(index));
+        index++;
+        setTimeout(typeChar, speed);
+      } else {
+        setIsTyping(false);
+      }
+    };
+
+    typeChar();
+  };
+
+  // Handle keyboard events
+  const handleInputEvent = useCallback(
+    async (event: KeyboardEvent) => {
+      const key = event.key;
+
+      switch (key) {
+        case "Enter":
+          if (isGptResponseLoading || isTyping) {
+            return;
+          }
+          try {
+            await getGPTResponse();
+            return;
+          } catch (e) {
+            setResultText(`Unable to get chatGPT response: ${e}`);
+          }
+        case "Escape":
+          console.log("closing");
+          return;
+      }
+    },
+    [query, isGptResponseLoading, isTyping, getGPTResponse]
+  );
+
+  // Fetch username on component mount
+  useEffect(() => {
+    const fetchUserName = async () => {
+      let name;
+      try {
+        name = await GetUserName();
+      } catch (e) {
+        setUserName("dear");
+      }
+
+      if (!name) {
+        console.error("User name not found");
+        setUserName("dear");
+      } else {
+        setUserName(name);
+      }
+    };
+    fetchUserName();
+  }, []);
+
+  useEffect(() => {
+    document.addEventListener("keypress", handleInputEvent);
+    return () => {
+      document.removeEventListener("keypress", handleInputEvent);
+    };
+  }, [handleInputEvent]);
 
   return (
     <div id="App">
@@ -34,13 +109,17 @@ function App() {
         <input
           id="name"
           className="w-10/12 text-black"
-          onChange={updateName}
+          onChange={updateQuery}
           autoComplete="off"
           name="input"
           type="text"
-          placeholder={`How can I help today, ${name}?`}
+          placeholder={`How can I help today, ${userName}?`}
         />
-        <button className="btn" onClick={getGPTResponse}>
+        <button
+          className="btn"
+          onClick={getGPTResponse}
+          disabled={isGptResponseLoading || isTyping}
+        >
           Search
         </button>
         <div id="result" className="result">

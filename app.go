@@ -4,6 +4,8 @@ import (
 	"context"
 	"log"
 	"os"
+	"os/user"
+	"strings"
 
 	"github.com/joho/godotenv"
 	"github.com/openai/openai-go"
@@ -32,6 +34,28 @@ func (a *App) startup(ctx context.Context) {
 	if envKey := os.Getenv("POCKET_GPT_KEY"); envKey != "" {
 		POCKET_GPT_KEY = envKey
 	}
+}
+
+func (a *App) GetUserName() string {
+	curUser, err := user.Current()
+
+	if err != nil {
+		return ""
+	}
+
+	var name string
+
+	if curUser.Name != "" {
+		// The actual `name` field of the user could be null
+		name = curUser.Name
+	} else {
+		// curUser.Username is essentially in format "Users/userName" to begin with
+		usernamePathParts := strings.Split(curUser.Username, "/")
+		lastIndex := len(usernamePathParts) - 1
+		name = usernamePathParts[lastIndex]
+	}
+
+	return name
 }
 
 // GetGPTResponse returns a response from GPT

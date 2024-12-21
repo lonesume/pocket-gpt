@@ -1,5 +1,6 @@
-# Pocket GPT
-🚀 A powerful desktop application for macOS, Windows, and Linux that brings ChatGPT directly to your computer. Built with Golang, React, TypeScript, and the OpenAI API for fast and seamless AI-powered searches at your fingertips.
+![Pocket GPT imag](build/appicon.png)
+# Pocket GPT 🚀
+A powerful desktop application for macOS, Windows, and Linux that brings ChatGPT directly to your computer. Built with Golang, React, TypeScript, and the OpenAI API for fast and seamless AI-powered searches at your fingertips.
 
 ## Project Overview
 Pocket GPT is a cross-platform desktop application for AI-powered text generation and management, built with local-first principles.
