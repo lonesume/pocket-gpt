@@ -22,11 +22,15 @@ function App() {
       return;
     }
 
-    setIsGptResponseLoading(true);
-    const gptResponse = await GetGPTResponse(query);
-    setIsGptResponseLoading(false);
+    try {
+      setIsGptResponseLoading(true);
+      const gptResponse = await GetGPTResponse(query);
+      setIsGptResponseLoading(false);
 
-    typeResponseGradually(gptResponse);
+      typeResponseGradually(gptResponse);
+    } catch (e) {
+      setResultText(`Error getting GPT response: ${e}`);
+    }
   }, [query, isTyping, isGptResponseLoading]);
 
   const typeResponseGradually = (message: string) => {
@@ -52,15 +56,18 @@ function App() {
   const handleInputEvent = useCallback(
     async (event: KeyboardEvent) => {
       const key = event.key;
-      console.log(event);
 
       switch (key) {
         case "Enter":
           if (isGptResponseLoading || isTyping) {
             return;
           }
-          await getGPTResponse();
-          return;
+          try {
+            await getGPTResponse();
+            return;
+          } catch (e) {
+            setResultText(`Unable to get chatGPT response: ${e}`);
+          }
         case "Escape":
           console.log("closing");
           return;
@@ -71,15 +78,21 @@ function App() {
 
   // Fetch username on component mount
   useEffect(() => {
-    async function fetchUserName() {
-      const name = await GetUserName();
+    const fetchUserName = async () => {
+      let name;
+      try {
+        name = await GetUserName();
+      } catch (e) {
+        setUserName("dear");
+      }
+
       if (!name) {
         console.error("User name not found");
         setUserName("dear");
       } else {
         setUserName(name);
       }
-    }
+    };
     fetchUserName();
   }, []);
 
