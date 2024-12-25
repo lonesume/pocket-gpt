@@ -3,4 +3,6 @@
 
 export function GetGPTResponse(arg1:string):Promise<string>;
 
+export function GetKeyError():Promise<string>;
+
 export function GetUserName():Promise<string>;
