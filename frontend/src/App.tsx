@@ -1,14 +1,37 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import "./App.css";
-import { GetGPTResponse, GetUserName } from "../wailsjs/go/main/App";
+import {
+  GetGPTResponse,
+  GetUserName,
+  GetKeyError,
+} from "../wailsjs/go/main/App";
+
 function App() {
   const [resultText, setResultText] = useState("");
   const [query, setQuery] = useState("");
   const [userName, setUserName] = useState("dear");
   const [isGptResponseLoading, setIsGptResponseLoading] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
+  const [keyHasError, setKeyHasError] = useState(true);
 
   const updateQuery = (e: any) => setQuery(e.target.value);
+
+  const shouldButtonBeDisabled = useMemo(() => {
+    return isGptResponseLoading || isTyping || keyHasError;
+  }, [keyHasError, isGptResponseLoading, isTyping]);
+
+  useEffect(() => {
+    GetKeyError().then((str: string) => {
+      console.log(`This is the value:${str}`);
+      if (str != "") {
+        setKeyHasError(true);
+      } else {
+        setKeyHasError(false);
+      }
+
+      setResultText(str);
+    });
+  }, []);
 
   const getGPTResponse = useCallback(async () => {
     if (!query) {
@@ -59,7 +82,7 @@ function App() {
 
       switch (key) {
         case "Enter":
-          if (isGptResponseLoading || isTyping) {
+          if (isGptResponseLoading || isTyping || keyHasError) {
             return;
           }
           try {
@@ -116,14 +139,21 @@ function App() {
           placeholder={`How can I help today, ${userName}?`}
         />
         <button
-          className="btn"
+          className={`btn bg-white text-blue-500 ${
+            shouldButtonBeDisabled ? " pointer-events-none" : ""
+          }`}
           onClick={getGPTResponse}
-          disabled={isGptResponseLoading || isTyping}
+          disabled={shouldButtonBeDisabled}
         >
           Search
         </button>
-        <div id="result" className="result">
-          {resultText}
+        <div
+          id="result"
+          className={`result ${keyHasError ? "text-red-400" : ""}`}
+        >
+          {resultText.split("\n").map((line) => (
+            <p key={line}>{line}</p>
+          ))}
         </div>
       </div>
     </div>
