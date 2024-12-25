@@ -36,6 +36,15 @@ func (a *App) startup(ctx context.Context) {
 	}
 }
 
+func (a *App) GetKeyError() string {
+	envKey := os.Getenv("POCKET_GPT_KEY")
+	if envKey == "" {
+		return "GPT Key Not Found\n\nThe search button will be disabled\n\nPlease open issue at https://github.com/lonesume/pocket-gpt/issues"
+	} else {
+		return ""
+	}
+}
+
 func (a *App) GetUserName() string {
 	curUser, err := user.Current()
 
