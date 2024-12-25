@@ -21,15 +21,14 @@ function App() {
   }, [keyHasError, isGptResponseLoading, isTyping]);
 
   useEffect(() => {
-    GetKeyError().then((str: string) => {
-      console.log(`This is the value:${str}`);
-      if (str != "") {
+    GetKeyError().then((err: string) => {
+      if (err != "") {
         setKeyHasError(true);
       } else {
         setKeyHasError(false);
       }
 
-      setResultText(str);
+      setResultText(err);
     });
   }, []);
 
